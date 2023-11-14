@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.BoardMapper">
+    <select id="selectAll" resultType="boardDTO">
+        SELECT * FROM `board`.`board`
+                          INNER JOIN user
+                                     ON board.writer_id = user.id
+    </select>
+
+    <select id="selectOne" parameterType="int" resultType="boardDTO">
+        SELECT * FROM `board`.`board`
+                          INNER JOIN  user
+                                      ON board.writer_id = user.id
+        WHERE `board`.`id` = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.example.springboard.model.BoardDTO">
+        INSERT INTO `board`(`title`, `content`, `entry_date`, `writer_id`, `modify_date`)
+        VALUES(#{title}, #{content}, NOW(), #{writerId}, NOW())
+    </insert>
+
+    <insert id="addComment" parameterType="com.example.springboard.model.CommentDTO">
+        INSERT INTO `reply`(`content`, `writer_id`, `board_id`, `entry_date`, `modify_date`,`nickname`)
+        VALUES (#{content}, #{writerId}, #{boardId}, NOW(), NOW(), #{nickname})
+    </insert>
+
+    <select id="getCommentsByBoardId" parameterType="int" resultType="com.example.springboard.model.CommentDTO">
+        SELECT * FROM `reply`
+        WHERE `board_id` = #{boardId}
+    </select>
+
+    <update id="update" parameterType="com.example.springboard.model.BoardDTO">
+        UPDATE `board`
+        SET `title` = #{title},
+            `content` = #{content},
+            `modify_date` = NOW()
+        WHERE `id` = #{id}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM `board=`.`board`
+        WHERE `id` = #{id}
+    </delete>
+</mapper>
